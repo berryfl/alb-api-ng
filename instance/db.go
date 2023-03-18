@@ -11,9 +11,9 @@ type Instance struct {
 	ID          uint                  `gorm:"column:id" json:"-"`
 	Name        string                `gorm:"column:name" json:"name" binding:"required"`
 	EnableHTTP  bool                  `gorm:"column:enable_http" json:"enable_http"`
-	EnableHTTPS bool                  `gorm:"column:enable_https" json:"enable_https`
+	EnableHTTPS bool                  `gorm:"column:enable_https" json:"enable_https"`
 	CertName    string                `gorm:"column:cert_name" json:"cert_name"`
-	CreatedAt   int64                 `gorm:"column:created_at" json:"created_at`
+	CreatedAt   int64                 `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt   int64                 `gorm:"column:updated_at" json:"updated_at"`
 	UpdatedBy   string                `gorm:"column:updated_by" json:"updated_by"`
 	DeletedAt   soft_delete.DeletedAt `json:"-"`
@@ -45,7 +45,7 @@ func (inst *Instance) Delete(db *gorm.DB) error {
 
 func GetInstance(db *gorm.DB, name string) (*Instance, error) {
 	var inst Instance
-	result := db.Where("name = ?", inst.Name).First(&inst)
+	result := db.Where("name = ?", name).First(&inst)
 	if result.Error != nil {
 		log.Printf("get_instance_failed: %v\n", result.Error)
 		return nil, result.Error

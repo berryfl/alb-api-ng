@@ -63,7 +63,7 @@ func DeleteInstance(c *gin.Context) {
 }
 
 type GetInstanceReq struct {
-	Name string `binding:"required"`
+	Name string `form:"name" binding:"required"`
 }
 
 func GetInstance(c *gin.Context) {
