@@ -1,0 +1,6 @@
+{
+    "name": "alb-berry",
+    "enable_http": true,
+    "enable_https": false,
+    "updated_by": "berry"
+}

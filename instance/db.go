@@ -8,15 +8,15 @@ import (
 )
 
 type Instance struct {
-	ID          uint
-	Name        string
-	EnableHTTP  bool
-	EnableHTTPS bool `gorm:"column:enable_https"`
-	CertName    string
-	CreatedAt   int64
-	UpdatedAt   int64
-	UpdatedBy   string
-	DeletedAt   soft_delete.DeletedAt
+	ID          uint                  `gorm:"column:id" json:"-"`
+	Name        string                `gorm:"column:name" json:"name"`
+	EnableHTTP  bool                  `gorm:"column:enable_http" json:"enable_http"`
+	EnableHTTPS bool                  `gorm:"column:enable_https" json:"enable_https`
+	CertName    string                `gorm:"column:cert_name" json:"cert_name"`
+	CreatedAt   int64                 `gorm:"column:created_at" json:"created_at`
+	UpdatedAt   int64                 `gorm:"column:updated_at" json:"updated_at"`
+	UpdatedBy   string                `gorm:"column:updated_by" json:"updated_by"`
+	DeletedAt   soft_delete.DeletedAt `json:"-"`
 }
 
 func (inst *Instance) TableName() string {
