@@ -61,3 +61,35 @@ func DeleteInstance(c *gin.Context) {
 		"success": true,
 	})
 }
+
+type GetInstanceReq struct {
+	Name string `binding:"required"`
+}
+
+func GetInstance(c *gin.Context) {
+	var req GetInstanceReq
+	if err := c.ShouldBindQuery(&req); err != nil {
+		log.Printf("get_instance: bind_query_failed: %v\n", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("get_instance: bind_query_failed: %v", err),
+		})
+		return
+	}
+
+	db := database.GetDB()
+	inst, err := instance.GetInstance(db, req.Name)
+	if err != nil {
+		log.Printf("get_instance: get_from_db_failed: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("get_instance: get_from_db_failed: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success":  true,
+		"instance": inst,
+	})
+}

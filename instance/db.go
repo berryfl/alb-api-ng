@@ -9,7 +9,7 @@ import (
 
 type Instance struct {
 	ID          uint                  `gorm:"column:id" json:"-"`
-	Name        string                `gorm:"column:name" json:"name"`
+	Name        string                `gorm:"column:name" json:"name" binding:"required"`
 	EnableHTTP  bool                  `gorm:"column:enable_http" json:"enable_http"`
 	EnableHTTPS bool                  `gorm:"column:enable_https" json:"enable_https`
 	CertName    string                `gorm:"column:cert_name" json:"cert_name"`
@@ -37,7 +37,18 @@ func (inst *Instance) Delete(db *gorm.DB) error {
 	result := db.Where("name = ?", inst.Name).Delete(inst)
 	if result.Error != nil {
 		log.Printf("delete_instance_failed: %v\n", result.Error)
+		return result.Error
 	}
 	log.Printf("delete_instance_success: affected_rows(%v) name(%v)\n", result.RowsAffected, inst.Name)
 	return nil
+}
+
+func GetInstance(db *gorm.DB, name string) (*Instance, error) {
+	var inst Instance
+	result := db.Where("name = ?", inst.Name).First(&inst)
+	if result.Error != nil {
+		log.Printf("get_instance_failed: %v\n", result.Error)
+		return nil, result.Error
+	}
+	return &inst, nil
 }
