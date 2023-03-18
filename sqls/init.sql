@@ -8,5 +8,5 @@ CREATE TABLE instance_tab (
     created_at int not null,
     updated_at int not null,
     deleted_at int not null,
-    UNIQUE (name)
+    UNIQUE (name, deleted_at)
 );
