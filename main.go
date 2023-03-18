@@ -27,4 +27,8 @@ func main() {
 	if err := inst.Create(db); err != nil {
 		log.Fatalln("create_instance_failed: exit")
 	}
+
+	if err := inst.Delete(db); err != nil {
+		log.Fatalln("delete_instance_failed: exit")
+	}
 }

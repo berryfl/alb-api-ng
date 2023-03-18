@@ -32,3 +32,12 @@ func (inst *Instance) Create(db *gorm.DB) error {
 	log.Printf("create_instance_success: id(%v) name(%v)\n", inst.ID, inst.Name)
 	return nil
 }
+
+func (inst *Instance) Delete(db *gorm.DB) error {
+	result := db.Where("name = ?", inst.Name).Delete(inst)
+	if result.Error != nil {
+		log.Printf("delete_instance_failed: %v\n", result.Error)
+	}
+	log.Printf("delete_instance_success: affected_rows(%v) name(%v)\n", result.RowsAffected, inst.Name)
+	return nil
+}
