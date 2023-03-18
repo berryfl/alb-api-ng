@@ -3,32 +3,17 @@ package main
 import (
 	"log"
 
-	"github.com/berryfl/alb-api-ng/instance"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-)
-
-const (
-	dsn = "host=localhost user=postgres password=23456 dbname=alb_db port=5432"
+	"github.com/berryfl/alb-api-ng/database"
+	"github.com/berryfl/alb-api-ng/web"
 )
 
 func main() {
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("connect_database_failed: %v\n", err)
+	if err := database.InitDB(); err != nil {
+		log.Fatalln("initialize_database_failed: exit")
 	}
 
-	inst := &instance.Instance{
-		Name:        "alb-berry",
-		EnableHTTP:  true,
-		EnableHTTPS: false,
-		UpdatedBy:   "berry",
-	}
-	if err := inst.Create(db); err != nil {
-		log.Fatalln("create_instance_failed: exit")
-	}
-
-	if err := inst.Delete(db); err != nil {
-		log.Fatalln("delete_instance_failed: exit")
+	r := web.NewRouter()
+	if err := r.Run(":18080"); err != nil {
+		log.Fatalf("run_router_failed: %v\n", err)
 	}
 }
