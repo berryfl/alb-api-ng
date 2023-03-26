@@ -1,6 +1,5 @@
 {
     "name": "alb-berry",
-    "enable_http": true,
-    "enable_https": false,
+    "service": "infra.alb",
     "updated_by": "berry"
 }

@@ -23,7 +23,6 @@ func CreateInstance(c *gin.Context) {
 
 	db := database.GetDB()
 	if err := inst.Create(db); err != nil {
-		log.Printf("create_instance: create_in_db_failed: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": fmt.Sprintf("create_instance: create_in_db_failed: %v", err),
@@ -49,7 +48,6 @@ func DeleteInstance(c *gin.Context) {
 
 	db := database.GetDB()
 	if err := inst.Delete(db); err != nil {
-		log.Printf("delete_instance: delete_in_db_failed: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": fmt.Sprintf("delete_instance: delete_in_db_failed: %v", err),
@@ -80,7 +78,6 @@ func GetInstance(c *gin.Context) {
 	db := database.GetDB()
 	inst, err := instance.GetInstance(db, req.Name)
 	if err != nil {
-		log.Printf("get_instance: get_from_db_failed: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": fmt.Sprintf("get_instance: get_from_db_failed: %v", err),

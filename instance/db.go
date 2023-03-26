@@ -8,15 +8,13 @@ import (
 )
 
 type Instance struct {
-	ID          uint                  `gorm:"column:id" json:"-"`
-	Name        string                `gorm:"column:name" json:"name" binding:"required"`
-	EnableHTTP  bool                  `gorm:"column:enable_http" json:"enable_http"`
-	EnableHTTPS bool                  `gorm:"column:enable_https" json:"enable_https"`
-	CertName    string                `gorm:"column:cert_name" json:"cert_name"`
-	CreatedAt   int64                 `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt   int64                 `gorm:"column:updated_at" json:"updated_at"`
-	UpdatedBy   string                `gorm:"column:updated_by" json:"updated_by"`
-	DeletedAt   soft_delete.DeletedAt `json:"-"`
+	ID        uint                  `gorm:"column:id" json:"-"`
+	Name      string                `gorm:"column:name" json:"name" binding:"required"`
+	Service   string                `gorm:"column:service" json:"service"`
+	CreatedAt int64                 `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt int64                 `gorm:"column:updated_at" json:"updated_at"`
+	UpdatedBy string                `gorm:"column:updated_by" json:"updated_by"`
+	DeletedAt soft_delete.DeletedAt `json:"-"`
 }
 
 func (inst *Instance) TableName() string {
@@ -36,7 +34,7 @@ func (inst *Instance) Create(db *gorm.DB) error {
 func (inst *Instance) Delete(db *gorm.DB) error {
 	result := db.Where("name = ?", inst.Name).Delete(inst)
 	if result.Error != nil {
-		log.Printf("delete_instance_failed: %v\n", result.Error)
+		log.Printf("delete_instance_failed: name(%v) %v\n", inst.Name, result.Error)
 		return result.Error
 	}
 	log.Printf("delete_instance_success: affected_rows(%v) name(%v)\n", result.RowsAffected, inst.Name)
@@ -47,7 +45,7 @@ func GetInstance(db *gorm.DB, name string) (*Instance, error) {
 	var inst Instance
 	result := db.Where("name = ?", name).First(&inst)
 	if result.Error != nil {
-		log.Printf("get_instance_failed: %v\n", result.Error)
+		log.Printf("get_instance_failed: name(%v) %v\n", name, result.Error)
 		return nil, result.Error
 	}
 	return &inst, nil
