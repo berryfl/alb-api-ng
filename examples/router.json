@@ -1,0 +1,27 @@
+{
+    "instance_name": "alb-berry",
+    "domain": "www.berryfl.asia",
+    "enable_http": true,
+    "enable_https": false,
+    "content": {
+        "rules": [
+            {
+                "name": "hello",
+                "match_type": "exact",
+                "match_path": "/hello",
+                "used_in_http": true,
+                "directives": [
+                    {
+                        "name": "return",
+                        "arguments": [
+                            "200",
+                            "\"hello world\\n\""
+                        ]
+                    }
+                ]
+            }
+        ],
+        "http_directives": []
+    },
+    "updated_by": "berry"
+}
