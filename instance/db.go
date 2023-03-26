@@ -41,6 +41,16 @@ func (inst *Instance) Delete(db *gorm.DB) error {
 	return nil
 }
 
+func (inst *Instance) Update(db *gorm.DB) error {
+	result := db.Where("name = ?", inst.Name).Updates(inst)
+	if result.Error != nil {
+		log.Printf("update_instance_failed: name(%v) %v\n", inst.Name, result.Error)
+		return result.Error
+	}
+	log.Printf("update_instance_success: affected_rows(%v) name(%v)\n", result.RowsAffected, inst.Name)
+	return nil
+}
+
 func GetInstance(db *gorm.DB, name string) (*Instance, error) {
 	var inst Instance
 	result := db.Where("name = ?", name).First(&inst)

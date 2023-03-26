@@ -60,6 +60,31 @@ func DeleteInstance(c *gin.Context) {
 	})
 }
 
+func UpdateInstance(c *gin.Context) {
+	var inst instance.Instance
+	if err := c.ShouldBindJSON(&inst); err != nil {
+		log.Printf("update_instance: bind_json_failed: %v\n", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("update_instance: bind_json_failed: %v", err),
+		})
+		return
+	}
+
+	db := database.GetDB()
+	if err := inst.Update(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("update_instance: update_in_db_failed: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
+
 type GetInstanceReq struct {
 	Name string `form:"name" binding:"required"`
 }
