@@ -1,0 +1,12 @@
+{
+    "instance_name": "alb-berry",
+    "name": "world",
+    "target_type": "domain_target",
+    "content": {
+        "domain_content": {
+            "domain": "world.berryfl.asia",
+            "port": 80
+        }
+    },
+    "updated_by": "berry"
+}

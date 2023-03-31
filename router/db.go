@@ -29,7 +29,7 @@ func (r *Router) TableName() string {
 func (r *Router) Create(db *gorm.DB) error {
 	result := db.Create(r)
 	if result.Error != nil {
-		log.Printf("create_router_failed: %v\n", result.Error)
+		log.Printf("create_router_failed: instance_name(%v) domain(%v) %v\n", r.InstanceName, r.Domain, result.Error)
 		return result.Error
 	}
 	log.Printf("create_router_success: id(%v) instance_name(%v) domain(%v)\n", r.ID, r.InstanceName, r.Domain)

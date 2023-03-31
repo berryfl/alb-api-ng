@@ -23,3 +23,16 @@ CREATE TABLE router_tab (
     deleted_at int not null,
     UNIQUE (instance_name, domain, deleted_at)
 );
+
+CREATE TABLE target_tab (
+    id bigserial not null PRIMARY KEY,
+    instance_name varchar(64) not null,
+    name varchar(64) not null,
+    target_type varchar(64) not null,
+    content jsonb not null,
+    updated_by varchar(64) not null,
+    created_at int not null,
+    updated_at int not null,
+    deleted_at int not null,
+    UNIQUE (instance_name, name, deleted_at)
+);
