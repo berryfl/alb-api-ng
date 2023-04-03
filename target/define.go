@@ -16,7 +16,7 @@ type ZookeeperContent struct {
 
 type DomainContent struct {
 	Domain string `json:"domain"`
-	Port   uint16 `json"port"`
+	Port   uint16 `json:"port"`
 }
 
 type IPPortContent struct {
