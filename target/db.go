@@ -45,3 +45,13 @@ func GetTarget(db *gorm.DB, instance_name string, name string) (*Target, error) 
 	}
 	return &t, nil
 }
+
+func ListTargets(db *gorm.DB, instance_name string, names []string) ([]*Target, error) {
+	var targets []*Target
+	result := db.Where("instance_name = ? AND name IN ?", instance_name, names).Find(&targets)
+	if result.Error != nil {
+		log.Printf("list_targets_failed: instance_name(%v) names(%v) %v\n", instance_name, len(names), result.Error)
+		return nil, result.Error
+	}
+	return targets, nil
+}

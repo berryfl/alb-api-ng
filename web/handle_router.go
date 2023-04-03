@@ -22,6 +22,14 @@ func CreateRouter(c *gin.Context) {
 	}
 
 	db := database.GetDB()
+	if err := r.Validate(db); err != nil {
+		c.JSON(http.StatusPreconditionFailed, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("create_router: validation_failed: %v", err),
+		})
+		return
+	}
+
 	if err := r.Create(db); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,

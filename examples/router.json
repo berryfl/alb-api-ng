@@ -19,6 +19,14 @@
                         ]
                     }
                 ]
+            },
+            {
+                "name": "world",
+                "match_type": "exact",
+                "match_path": "/world",
+                "used_in_http": true,
+                "target_name": "world",
+                "target_protocol": "http"
             }
         ],
         "http_directives": []
