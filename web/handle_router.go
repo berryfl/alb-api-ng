@@ -22,7 +22,10 @@ func CreateRouter(c *gin.Context) {
 	}
 
 	db := database.GetDB()
-	if err := r.Validate(db); err != nil {
+	tx := db.Begin()
+
+	if err := r.Validate(tx); err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusPreconditionFailed, gin.H{
 			"success": false,
 			"message": fmt.Sprintf("create_router: validation_failed: %v", err),
@@ -31,9 +34,18 @@ func CreateRouter(c *gin.Context) {
 	}
 
 	if err := r.Create(db); err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": fmt.Sprintf("create_router: create_in_db_failed: %v", err),
+		})
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("create_router: db_commit_error: %v", err),
 		})
 		return
 	}
