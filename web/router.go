@@ -15,6 +15,7 @@ func NewRouter() *gin.Engine {
 
 	routerAPI := r.Group("/router")
 	routerAPI.POST("/create", CreateRouter)
+	routerAPI.POST("/delete", DeleteRouter)
 	routerAPI.GET("/get", GetRouter)
 
 	targetAPI := r.Group("/target")

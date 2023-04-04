@@ -55,6 +55,31 @@ func CreateRouter(c *gin.Context) {
 	})
 }
 
+func DeleteRouter(c *gin.Context) {
+	var r router.Router
+	if err := c.ShouldBindJSON(&r); err != nil {
+		log.Printf("delete_router: bind_json_failed: %v\n", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("delete_router: bind_json_failed: %v", err),
+		})
+		return
+	}
+
+	db := database.GetDB()
+	if err := r.Delete(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": fmt.Sprintf("delete_router: delete_in_db_failed: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
+
 type GetRouterReq struct {
 	InstanceName string `form:"instance-name" binding:"required"`
 	Domain       string `form:"domain" binding:"required"`

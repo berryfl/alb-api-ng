@@ -36,6 +36,16 @@ func (r *Router) Create(db *gorm.DB) error {
 	return nil
 }
 
+func (r *Router) Delete(db *gorm.DB) error {
+	result := db.Where("instance_name = ? AND domain = ?", r.InstanceName, r.Domain).Delete(r)
+	if result.Error != nil {
+		log.Printf("delete_router_failed: instance_name(%v) domain(%v) %v\n", r.InstanceName, r.Domain, result.Error)
+		return result.Error
+	}
+	log.Printf("delete_router_success: instance_name(%v) domain(%v)\n", r.InstanceName, r.Domain)
+	return nil
+}
+
 func GetRouter(db *gorm.DB, instance_name string, domain string) (*Router, error) {
 	var r Router
 	result := db.Where("instance_name = ? AND domain = ?", instance_name, domain).First(&r)
