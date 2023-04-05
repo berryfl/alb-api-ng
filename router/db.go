@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/berryfl/alb-api-ng/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -58,7 +59,10 @@ func GetRouter(db *gorm.DB, instance_name string, domain string) (*Router, error
 
 func GetRoutersByTarget(db *gorm.DB, instanceName string, targetName string) ([]*Router, error) {
 	var routers []*Router
-	result := db.Where("instance_name = ? AND jsonb_path_exists(content, '$.rules[*].target_name ?? (@ == \"?\")')", instanceName, targetName).Find(&routers)
+	result := db.Where(
+		"instance_name = ?",
+		instanceName,
+	).Find(&routers, datatypes.JSONArrayQuery("content", "$.rules[*].target_name").HasValue(targetName))
 	if result.Error != nil {
 		log.Printf("get_routers_by_target_failed: instance_name(%v) target(%v) %v\n", instanceName, targetName, result.Error)
 		return nil, result.Error
