@@ -7,6 +7,7 @@ import (
 
 	"github.com/berryfl/alb-api-ng/database"
 	"github.com/berryfl/alb-api-ng/router"
+	"github.com/berryfl/alb-api-ng/validate"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +25,7 @@ func CreateRouter(c *gin.Context) {
 	db := database.GetDB()
 	tx := db.Begin()
 
-	if err := r.Validate(tx); err != nil {
+	if err := validate.ValidateRouter(tx, &r); err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusPreconditionFailed, gin.H{
 			"success": false,

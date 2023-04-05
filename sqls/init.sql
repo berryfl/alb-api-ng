@@ -24,6 +24,8 @@ CREATE TABLE router_tab (
     UNIQUE (instance_name, domain, deleted_at)
 );
 
+CREATE INDEX idx_router_content ON router_tab USING GIN (content);
+
 CREATE TABLE target_tab (
     id bigserial not null PRIMARY KEY,
     instance_name varchar(64) not null,

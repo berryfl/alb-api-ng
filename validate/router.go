@@ -1,14 +1,15 @@
-package router
+package validate
 
 import (
 	"fmt"
 	"log"
 
+	"github.com/berryfl/alb-api-ng/router"
 	"github.com/berryfl/alb-api-ng/target"
 	"gorm.io/gorm"
 )
 
-func (r *Router) Validate(db *gorm.DB) error {
+func ValidateRouter(db *gorm.DB, r *router.Router) error {
 	var targetNames []string
 	for _, rule := range r.Content.Rules {
 		if len(rule.TargetName) > 0 {
