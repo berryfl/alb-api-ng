@@ -36,6 +36,16 @@ func (t *Target) Create(db *gorm.DB) error {
 	return nil
 }
 
+func (t *Target) Delete(db *gorm.DB) error {
+	result := db.Where("instance_name = ? AND name = ?", t.InstanceName, t.Name).Delete(t)
+	if result.Error != nil {
+		log.Printf("delete_target_failed: instance_name(%v) name(%v) %v\n", t.InstanceName, t.Name, result.Error)
+		return result.Error
+	}
+	log.Printf("delete_target_success: affected_rows(%v) instance_name(%v) name(%v)\n", result.RowsAffected, t.InstanceName, t.Name)
+	return nil
+}
+
 func GetTarget(db *gorm.DB, instance_name string, name string) (*Target, error) {
 	var t Target
 	result := db.Where("instance_name = ? AND name = ?", instance_name, name).First(&t)

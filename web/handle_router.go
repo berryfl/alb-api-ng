@@ -34,7 +34,7 @@ func CreateRouter(c *gin.Context) {
 		return
 	}
 
-	if err := r.Create(db); err != nil {
+	if err := r.Create(tx); err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,

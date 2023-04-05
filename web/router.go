@@ -20,6 +20,7 @@ func NewRouter() *gin.Engine {
 
 	targetAPI := r.Group("/target")
 	targetAPI.POST("/create", CreateTarget)
+	targetAPI.POST("/delete", DeleteTarget)
 	targetAPI.GET("/get", GetTarget)
 
 	return r
