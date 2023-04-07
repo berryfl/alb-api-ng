@@ -5,10 +5,25 @@ import (
 
 	"github.com/berryfl/alb-api-ng/database"
 	"github.com/berryfl/alb-api-ng/web"
+	"github.com/spf13/viper"
 )
 
 func main() {
-	if err := database.InitDB(); err != nil {
+	viper.SetConfigName("alb")
+	viper.AddConfigPath("config/")
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("read_config_failed: %v\n", err)
+	}
+
+	connectParams := &database.ConnectParams{
+		Host:     viper.GetString("database.host"),
+		User:     viper.GetString("database.user"),
+		Password: viper.GetString("database.password"),
+		DBName:   viper.GetString("database.dbname"),
+		Port:     viper.GetUint16("database.port"),
+	}
+
+	if err := database.InitDB(connectParams); err != nil {
 		log.Fatalln("initialize_database_failed: exit")
 	}
 

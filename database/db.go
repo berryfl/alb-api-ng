@@ -1,21 +1,35 @@
 package database
 
 import (
+	"fmt"
 	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-const (
-	dsn = "host=localhost user=postgres password=23456 dbname=alb_db port=5432"
-)
-
 var (
 	db *gorm.DB
 )
 
-func InitDB() error {
+type ConnectParams struct {
+	Host     string
+	User     string
+	Password string
+	DBName   string
+	Port     uint16
+}
+
+func InitDB(params *ConnectParams) error {
+	dsn := fmt.Sprintf(
+		"host=%v user=%v password=%v dbname=%v port=%v",
+		params.Host,
+		params.User,
+		params.Password,
+		params.DBName,
+		params.Port,
+	)
+
 	var err error
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
