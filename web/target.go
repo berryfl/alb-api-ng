@@ -101,13 +101,13 @@ func GetTarget(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": fmt.Sprintf("get_router: get_from_db_failed: %v", err),
+			"message": fmt.Sprintf("get_target: get_from_db_failed: %v", err),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"router":  t,
+		"target":  t,
 	})
 }

@@ -23,5 +23,10 @@ func NewRouter() *gin.Engine {
 	targetAPI.POST("/delete", DeleteTarget)
 	targetAPI.GET("/get", GetTarget)
 
+	certificateAPI := r.Group("/certificate")
+	certificateAPI.POST("/create", CreateCertificate)
+	certificateAPI.POST("/delete", DeleteCertificate)
+	certificateAPI.GET("/get", GetCertificate)
+
 	return r
 }

@@ -69,3 +69,13 @@ func GetRoutersByTarget(db *gorm.DB, instanceName string, targetName string) ([]
 	}
 	return routers, nil
 }
+
+func GetRoutersByCert(db *gorm.DB, instanceName string, certName string) ([]*Router, error) {
+	var routers []*Router
+	result := db.Where("cert_name = ?", certName).Find(&routers)
+	if result.Error != nil {
+		log.Printf("get_routers_by_cert_failed: instance_name(%v) cert(%v) %v\n", instanceName, certName, result.Error)
+		return nil, result.Error
+	}
+	return routers, nil
+}

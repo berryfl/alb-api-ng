@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/berryfl/alb-api-ng/certificate"
 	"github.com/berryfl/alb-api-ng/router"
 	"github.com/berryfl/alb-api-ng/target"
 	"gorm.io/gorm"
 )
 
-func ValidateRouter(db *gorm.DB, r *router.Router) error {
+func ValidateRouterTargets(db *gorm.DB, r *router.Router) error {
 	var targetNames []string
 	for _, rule := range r.Content.Rules {
 		if len(rule.TargetName) > 0 {
@@ -19,7 +20,6 @@ func ValidateRouter(db *gorm.DB, r *router.Router) error {
 
 	targets, err := target.ListTargets(db, r.InstanceName, targetNames)
 	if err != nil {
-		log.Printf("validate_router_error: instance_name(%v) domain(%v) %v", r.InstanceName, r.Domain, err)
 		return err
 	}
 
@@ -28,15 +28,53 @@ func ValidateRouter(db *gorm.DB, r *router.Router) error {
 		targetMap[t.Name] = true
 	}
 
-	missingTarget := false
+	var missingTargets []string
 	for _, targetName := range targetNames {
 		if _, ok := targetMap[targetName]; !ok {
-			log.Printf("target_non_existent: instance_name(%v) domain(%v) target(%v)\n", r.InstanceName, r.Domain, targetName)
-			missingTarget = true
+			missingTargets = append(missingTargets, targetName)
 		}
 	}
-	if missingTarget {
-		return fmt.Errorf("target_non_existent: instance_name(%v) domain(%v)", r.InstanceName, r.Domain)
+	if len(missingTargets) > 0 {
+		return fmt.Errorf("no_such_targets: instance_name(%v) targets(%+v)", r.InstanceName, missingTargets)
+	}
+
+	return nil
+}
+
+func ValidateRouterCert(db *gorm.DB, r *router.Router) error {
+	verifyCert := len(r.CertName) > 0
+	for _, rule := range r.Content.Rules {
+		if rule.UsedInHTTPS {
+			verifyCert = true
+		}
+	}
+
+	if !verifyCert {
+		log.Printf("skip_verify_cert: instance_name(%v) domain(%v)\n", r.InstanceName, r.Domain)
+		return nil
+	}
+
+	cert, err := certificate.GetCertificate(db, r.InstanceName, r.CertName)
+	if err != nil {
+		return fmt.Errorf("get_cert_error: instance_name(%v) cert_name(%v) %v", r.InstanceName, r.CertName, err)
+	}
+
+	if !certificate.IsDomainInCertDomains(cert.Domains, r.Domain) {
+		return fmt.Errorf("cert_not_match: instance_name(%v) cert_name(%v)", r.InstanceName, r.CertName)
+	}
+
+	return nil
+}
+
+func ValidateRouter(db *gorm.DB, r *router.Router) error {
+	if err := ValidateRouterTargets(db, r); err != nil {
+		log.Printf("validate_router_targets_error: instance_name(%v) domain(%v) %v\n", r.InstanceName, r.Domain, err)
+		return err
+	}
+
+	if err := ValidateRouterCert(db, r); err != nil {
+		log.Printf("validate_router_cert_error: instance_name(%v) domain(%v) %v\n", r.InstanceName, r.Domain, err)
+		return err
 	}
 
 	return nil
